@@ -7,10 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import org.sqlite.*;
 
 public class RDB {
 	
-	private final String dbDriver = "org.sqlite.JDBC";
+	private final String dbDriver = "jdbc:sqlite:";
 	private Connection con = null;
 	private Statement stmt = null;
 
@@ -20,12 +21,14 @@ public class RDB {
 	 */
 	public RDB(String loc) {
 		try {
-			con = DriverManager.getConnection(dbDriver);
+			Class.forName("org.sqlite.JDBC");
+			con = DriverManager.getConnection((dbDriver+loc));
 			stmt = con.createStatement();
 		}
-		catch (SQLException e) {
+		catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+		
 	}
 	
 	/**
@@ -35,14 +38,15 @@ public class RDB {
 	 * @throws SQLException mandatory when mucking with SQL
 	 */
 	public void initialize() throws SQLException {
-		stmt.executeQuery("CREATE TABLE receipts (id INTEGER PRIMARY KEY, " +
-				"name TEXT NOT NULL, " +
-				"price REAL NOT NULL, " +
-				"category TEXT NOT NULL, " +
-				"datetime INTEGER NOT NULL, " +
-				"salestax REAL NOT NULL " +
-				"paymentmethod TEXT NOT NULL" +
-				"notes TEXT");
+		stmt.executeQuery("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY," +
+				"name TEXT NOT NULL," +
+				"price REAL NOT NULL," +
+				"category TEXT NOT NULL," +
+				"datetime INTEGER NOT NULL," +
+				"salestax REAL NOT NULL," +
+				"paymentmethod TEXT NOT NULL," +
+				"notes TEXT)");
+		stmt.close();
 	}
 	
 	/**
@@ -81,6 +85,7 @@ public class RDB {
 		ps.setString(8, notes);
 		
 		ps.executeQuery();
+		ps.close();
 	}
 	
 	/**
@@ -104,6 +109,8 @@ public class RDB {
 		double tax = rs.getDouble("salestax");
 		String mop = rs.getString("paymentmethod");
 		String notes = rs.getString("notes");
+		rs.close();
+		ps.close();
 
 		Receipt retMe = new Receipt(id,name,total,category,date,tax,mop,notes);
 		return retMe;
@@ -118,6 +125,8 @@ public class RDB {
 		while (rs.next()) {
 			retMe.add(retrieveReceipt(rs.getInt("id")));
 		}
+		rs.close();
+		ps.close();
 		return retMe;
 	}
 
@@ -130,6 +139,13 @@ public class RDB {
 		while(rs.next()) {
 			retMe.add(retrieveReceipt(rs.getInt("id")));
 		}
+		rs.close();
+		ps.close();
 		return retMe;
+	}
+	
+	public void close() throws SQLException {
+		stmt.close();
+		con.close();
 	}
 }

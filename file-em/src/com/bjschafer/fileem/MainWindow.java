@@ -17,7 +17,7 @@ public class MainWindow {
 		// TODO Auto-generated method stub
 
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		final Shell shell = new Shell(display);
 		
 		Menu menu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menu);
@@ -31,32 +31,26 @@ public class MainWindow {
 		MenuItem mntmNewReceipt = new MenuItem(menu_1, SWT.NONE);
 		mntmNewReceipt.setText("New Receipt");
 		
-		MenuItem mntmQuit = new MenuItem(menu_1, SWT.NONE);
-		mntmQuit.setText("Quit");
-		
-		class fileQuitListener implements SelectionListener {
-			public void widgetSelected(SelectionEvent event) {
-//				shell.getDisplay().dispose();
-				if (((MenuItem) event.widget).getText().equals("Quit"))
-					shell.close();
-				}
-			
-			public void widgetDefaultSelected(SelectionEvent event) {
-//				shell.getDisplay().dispose();
-				System.exit(0);
-			}
-		}
-		
-		mntmQuit.addSelectionListener(new SelectionListener() {
-			@Override
+		mntmNewReceipt.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				System.exit(0);
-			}
-			public void widgetDefaultSelected(SelectionEvent event) {
-				System.exit(0);
+				NewReceipt receipt = new NewReceipt(shell, SWT.NONE);
+				receipt.open();
+				
+				}
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		
+		MenuItem mntmQuit = new MenuItem(menu_1, SWT.NONE);
+		mntmQuit.setText("Quit");
+		
+		mntmQuit.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				System.exit(0);
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
 		mntmEdit.setText("Edit");
 		
@@ -95,6 +89,8 @@ public class MainWindow {
 		
 		MenuItem mntmAbout = new MenuItem(menu_5, SWT.NONE);
 		mntmAbout.setText("About");
+		
+		shell.open();
 		while (!shell.isDisposed())
 		{
 			if (!display.readAndDispatch()) display.sleep();
