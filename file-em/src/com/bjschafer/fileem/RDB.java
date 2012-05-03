@@ -7,13 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import org.sqlite.*;
 
 public class RDB {
 	
 	private final String dbDriver = "jdbc:sqlite:";
 	private Connection con = null;
-	private Statement stmt = null;
+//	private Statement stmt = null;
 
 	/**
 	 * Creates the receipt db object, and creates the connection to the sqlite db
@@ -23,7 +22,7 @@ public class RDB {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			con = DriverManager.getConnection((dbDriver+loc));
-			stmt = con.createStatement();
+//			stmt = con.createStatement();
 		}
 		catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -38,7 +37,8 @@ public class RDB {
 	 * @throws SQLException mandatory when mucking with SQL
 	 */
 	public void initialize() throws SQLException {
-		stmt.executeQuery("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY," +
+		Statement stmt = con.createStatement();
+		stmt.executeUpdate("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY," +
 				"name TEXT NOT NULL," +
 				"price REAL NOT NULL," +
 				"category TEXT NOT NULL," +
@@ -74,7 +74,12 @@ public class RDB {
 		else
 			notes = storeMe.getNotes();
 		
-		PreparedStatement ps = con.prepareStatement("INSERT INTO receipts VALUES (?,?,?,?,?,?,?,?");
+		PreparedStatement ps = con.prepareStatement("INSERT INTO receipts VALUES (?,?,?,?,?,?,?,?)");
+//		Statement stmt = con.createStatement();
+//		stmt.executeUpdate("INSERT INTO receipts (id, name, price, category, datetime, salestax, paymentmethod, notes) VALUES (" + sortId + "," + name + "," + total + "," +
+//				category + "," + date + "," + salesTax + "," + methodOfPayment + "," + notes + ")");
+//		
+//		stmt.close();
 		ps.setInt(1,sortId);
 		ps.setString(2,name);
 		ps.setDouble(3, total);
@@ -84,7 +89,7 @@ public class RDB {
 		ps.setString(7, methodOfPayment);
 		ps.setString(8, notes);
 		
-		ps.executeQuery();
+		ps.executeUpdate();
 		ps.close();
 	}
 	
@@ -103,7 +108,7 @@ public class RDB {
 		ResultSet rs = ps.executeQuery();
 		
 		String name = rs.getString("name");
-		double total = rs.getDouble("total");
+		double total = rs.getDouble("price");
 		String category = rs.getString("category");
 		Long date = rs.getLong("datetime");
 		double tax = rs.getDouble("salestax");
@@ -145,7 +150,7 @@ public class RDB {
 	}
 	
 	public void close() throws SQLException {
-		stmt.close();
+//		stmt.close();
 		con.close();
 	}
 }

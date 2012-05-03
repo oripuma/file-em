@@ -118,7 +118,8 @@ public class NewReceipt extends Dialog {
 	    btnOk.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
 //		        input = rName.getText();
-		        Receipt userCreated = new Receipt(0, rName.getText(), Double.parseDouble(rPrice.getText()), rCat.getText(), (new Date()), Double.parseDouble(rTax.getText()), rMop.getText(), rNotes.getText());
+		    	  
+		        Receipt userCreated = new Receipt(rName.getText(), Double.parseDouble(rPrice.getText()), rCat.getText(), (new Date()), Double.parseDouble(rTax.getText()), rMop.getText(), rNotes.getText());
 		        RDB theDB = new RDB("test.sql");
 		        try{
 		        	theDB.initialize();

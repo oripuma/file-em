@@ -3,6 +3,7 @@ package com.bjschafer.fileem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -13,19 +14,25 @@ public class Receipt {
 	private String name = "";
 	private double total = -1;
 	private String category = "";
-	private Date theDate;
+	private Date theDate = new Date();;
+//	private Calendar theDate = Calendar.getInstance();
 	// TODO: Implement tracking of individual items.
 	//    private Hashtable purchases = new Hashtable();
 	private double salesTax = -1;
 	private String methodOfPayment = "";
 	private String notes = "";
 
+	
+	public Receipt() {
+		
+	}
 	/**
 	 * Creates a receipt given just an ID, autogenerates date/time.
 	 * @param mySortID the sort ID, a requirement.  Must be unique, of course.
 	 */
 	public Receipt(int mySortID) {
-		theDate = (new Date());
+//		theDate = (Calendar.getInstance());
+		theDate = new Date();
 		sortId = mySortID;
 	}
 
@@ -40,8 +47,8 @@ public class Receipt {
 	 * @param MethodOf the method of payment used
 	 * @param Notes any notes
 	 */
-	public Receipt(int SortID, String Name, double Total, String Category, Date THEDate, double SalesTax, String MethodOf, String Notes) {
-		sortId = SortID;
+	public Receipt(String Name, double Total, String Category, Date THEDate, double SalesTax, String MethodOf, String Notes) {
+		sortId = this.autogenID(THEDate);
 		name = Name;
 		total = Total;
 		category = Category;
@@ -63,11 +70,16 @@ public class Receipt {
 	 * @param Notes any notes
 	 */
 	public Receipt(int SortID, String Name, double Total, String Category, long THEDate, double SalesTax, String MethodOf, String Notes) {
-		sortId = SortID;
+//		Date temp = new Date();
+//		temp.setTime(THEDate);
+//		this.theDate.setTime(temp);
+//		this.theDate.setTimeInMillis(THEDate);
+//		sortId = this.autogenID(this.theDate);
+		this.theDate.setTime(THEDate);
 		name = Name;
 		total = Total;
 		category = Category;
-		this.theDate.setTime(THEDate);
+//		this.theDate.setTime(THEDate);
 		salesTax = SalesTax;
 		methodOfPayment = MethodOf;
 		notes = Notes;
@@ -120,6 +132,14 @@ public class Receipt {
 			return false;
 		}
 
+	}
+	
+	private int autogenID(Date date) {
+		
+		long time = date.getTime();
+		Random generator = new Random(time);
+		int temp = generator.nextInt();
+		return Math.abs(temp + generator.nextInt());
 	}
 
 	/**
@@ -246,6 +266,17 @@ public class Receipt {
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+	
+	public String getFriendlyDate() {
+//		String toReturn = this.theDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+//		toReturn += " ";
+//		toReturn += this.theDate.getDisplayName(Calendar.DATE, Calendar.LONG, Locale.getDefault());
+//		toReturn += ", ";
+//		toReturn += this.theDate.getDisplayName(Calendar.YEAR, Calendar.LONG, Locale.getDefault());
+//		return toReturn;
+		String toReturn = this.theDate.toString();
+		return toReturn;
 	}
 
 	public String toString() {
