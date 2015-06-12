@@ -1,0 +1,1 @@
+File-'em (pronounced like phylum) is an open source alternative to the software behind NeatReceipts®.  It allows you to load in scanned receipts and automatically pulls the information out of the receipt using OCR and stores it in a SQLite database for easy reference, reports, and retrieval.
